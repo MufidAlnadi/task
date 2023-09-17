@@ -92,7 +92,23 @@
             <IconButton
                 color="inherit"
                 aria-label="add user"
-                onClick={props.openModal}
+                onClick={props.openCreateUser}
+                sx={{ mr: 2 }}
+            >
+                <AddIcon fontSize="large" />
+            </IconButton>
+            <IconButton
+                color="inherit"
+                aria-label="add Subject"
+                onClick={props.openAddSubject}
+                sx={{ mr: 2 }}
+            >
+                <AddIcon fontSize="large" />
+            </IconButton>
+            <IconButton
+                color="inherit"
+                aria-label="add Assign Student Subject"
+                onClick={props.openAssignStudentSubject}
                 sx={{ mr: 2 }}
             >
                 <AddIcon fontSize="large" />

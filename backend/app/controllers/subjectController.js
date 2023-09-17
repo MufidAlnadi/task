@@ -26,6 +26,27 @@ const getAllSubjects = async (req, res) => {
     }
   };
 
+  const getUsersWithoutSubject = async (req, res) => {
+    try {
+      const subjectId = req.params.subjectId;
+      const subject = await Subject.findById(subjectId);
+  
+      if (!subject) {
+        return res.status(404).json({ message: 'Subject not found' });
+      }
+  
+      const usersWithSubject = await User.find({ subjects: subjectId });
+      const allStudents = await User.find({ role: 'user', activated: true, deleted: false});
+      
+      const usersWithoutSubject = allStudents.filter(user => !usersWithSubject.some(u => u._id.equals(user._id)));
+  
+      res.status(200).json(usersWithoutSubject);
+    } catch (error) {
+      console.error('Error fetching users without subject:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+
   const assignSubjectToStudent = async (req, res) => {
     try {
       const { userId, subjectId } = req.body;
@@ -42,6 +63,7 @@ const getAllSubjects = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
+
   updateStudentMarks = async (req, res) => {
     try {
       const { userId, subjectName, newMarks } = req.body;
@@ -65,5 +87,6 @@ const getAllSubjects = async (req, res) => {
 module.exports = {
     addSubject,
     getAllSubjects,
-    assignSubjectToStudent
+    assignSubjectToStudent,
+    getUsersWithoutSubject
 };

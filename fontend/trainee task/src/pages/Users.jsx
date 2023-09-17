@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../api/axios";
 import SideBar from "../components/SideBar";
 import DataTable from "../components/DataTable";
-import { FormatTime } from "../utils/FromatDate";
-import { IconButton, TextField } from "@mui/material";
+
+import { IconButton } from "@mui/material";
 import CreditScoreIcon from "@mui/icons-material/CreditScore";
 import toast from "react-hot-toast";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -12,27 +12,33 @@ import UserUpdateModal from "../components/modal/UserUpdateModal";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import ConfirmationDialog from "../components/modal/ConfirmationDialog";
 import CreateUser from "../components/modal/CreateUser";
+import { ACTIVE_URL, DELETE_URL, GETUSERS_URL, UPDATE_URL } from "../api/Url";
+import AddSubject from "../components/modal/AddSubject";
+import AssignmentModal from "../components/modal/AssignStudentSubject";
 
 const Users = () => {
-  const [rows, setRows] = useState([]);
-  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteUser, setDeleteUser] = useState(null);
-  const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false); // Add state for Create User modal
+  const [isUpdateModalOpen, setUpdateModalOpen] = useState(false);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
+  const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
+  const [isAssignStudentSubject, setAssignStudentSubject] = useState(false);
 
-
-  useEffect(() => {
+  const [rows, setRows] = useState([]);
+  const fetchData = () => {
     axios
-      .get("http://localhost:3100/user/getallusers")
+      .get(GETUSERS_URL)
       .then((response) => {
         setRows(response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [rows]);
-
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
   const handleUpdateClick = (row) => {
     if (row && row._id) {
       setSelectedUser(row);
@@ -44,43 +50,43 @@ const Users = () => {
 
   const handleUpdateUser = async (row) => {
     try {
-      const response = await axios.put("http://localhost:3100/user/update", {
+      const response = await axios.put(UPDATE_URL, {
         userId: row._id,
         username: row.username,
         email: row.email,
       });
       toast.success("User updated successfully:", response.data);
+      fetchData();
     } catch (error) {
       toast.error("Error updating user:", error);
     }
   };
   const handleDeleteClick = (row) => {
-    setDeleteUser(row); 
-    setDeleteDialogOpen(true); 
+    setDeleteUser(row);
+    setDeleteDialogOpen(true);
   };
   const handleDeleteConfirmed = async () => {
     try {
-      const response = await axios.put(`http://localhost:3100/user/delete`, {
+      const response = await axios.put(DELETE_URL, {
         userId: deleteUser._id,
         deleted: true,
       });
-  
+
       toast.success("User deactivated successfully");
       setDeleteDialogOpen(false);
+      fetchData();
     } catch (error) {
       toast.error("Error updating user activation status");
     }
   };
-  const handleDeleteCancelled = () => {
-    setDeleteDialogOpen(false); 
-  };
   const handleActivateUser = async (row) => {
     try {
-      const response = await axios.put(`http://localhost:3100/user/activate`, {
+      const response = await axios.put(ACTIVE_URL, {
         userId: row._id,
         activated: true,
       });
       toast.success("User activated successfully");
+      fetchData();
     } catch (error) {
       toast.error("Error updating user activation status");
     }
@@ -147,15 +153,27 @@ const Users = () => {
     },
   ];
   const filteredRows = rows.filter((user) => !user.deleted);
-  const handleOpenCreateUserModal = () => {
-    console.log("Open Create User Modal"); // Add this line for debugging
-    setCreateUserModalOpen(true);
-  };
-  
   return (
     <>
-      <SideBar title="Users" openModal={handleOpenCreateUserModal} />
-      <CreateUser open={isCreateUserModalOpen} onClose={() => setCreateUserModalOpen(false)} /> {/* Render the Create User component */}
+      <SideBar title="Users" openCreateUser={() => setCreateUserModalOpen(true)} 
+       openAddSubject ={()=>setIsAddSubjectOpen(true)}
+       openAssignStudentSubject ={()=>setAssignStudentSubject(true)}
+      />
+      <CreateUser
+        open={isCreateUserModalOpen}
+        onClose={() => setCreateUserModalOpen(false)}
+        // fetchData={fetchData()}
+      />
+      <AddSubject
+        open={isAddSubjectOpen}
+        onClose={() => setIsAddSubjectOpen(false)}
+        // fetchData={fetchData()}
+      />
+      <AssignmentModal
+          open={isAssignStudentSubject}
+          onClose={() => setAssignStudentSubject(false)}
+      />
+
       <DataTable
         columns={columns}
         rows={filteredRows}
@@ -175,9 +193,9 @@ const Users = () => {
       </CustomModal>
       <ConfirmationDialog
         open={isDeleteDialogOpen}
-        onClose={handleDeleteCancelled}
+        onClose={() => setDeleteDialogOpen(false)}
         onConfirm={handleDeleteConfirmed}
-        onCancel={handleDeleteCancelled}
+        onCancel={() => setDeleteDialogOpen(false)}
         message="Are you sure you want to delete this user?"
       />
     </>

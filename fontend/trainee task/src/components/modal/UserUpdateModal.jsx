@@ -4,8 +4,6 @@ import * as Yup from "yup";
 import { TextField, Button, DialogActions } from "@mui/material";
 
 const UserUpdateModal = ({ selectedUser, onUpdate, onClose }) => {
-  console.log("selectedUser1:", selectedUser);
-
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
@@ -21,8 +19,8 @@ const UserUpdateModal = ({ selectedUser, onUpdate, onClose }) => {
       }}
       validationSchema={validationSchema}
       onSubmit={(values, { setSubmitting }) => {
-        onUpdate(values); // Call the onUpdate function with the form values
-        onClose(); // Close the modal
+        onUpdate(values); 
+        onClose(); 
         setSubmitting(false);
       }}
     >

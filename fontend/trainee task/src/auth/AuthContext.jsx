@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import axios from "axios"; // Don't forget to import axios
+import axios from "../api/axios";
+import { TOKEN_URL } from "../api/Url";
 
 const AuthContext = createContext();
 
@@ -10,9 +11,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false);
-  const [role, setRole] = useState("");
-  console.log("🚀 ~ file: AuthContext.jsx:14 ~ AuthProvider ~ role:", role)
-  
+  const [role, setRole] = useState("");  
   useEffect(() => {
     const fetchUserRole = async () => {
       const authToken = Cookies.get("authToken");      
@@ -21,7 +20,7 @@ export const AuthProvider = ({ children }) => {
           'Authorization': `${authToken}`
         }
         try {
-          const response = await axios.get("http://localhost:3100/token/decode-token", { headers });
+          const response = await axios.get(TOKEN_URL, { headers });
           setRole(response.data); 
           setAuthenticated(true);
         } catch (error) {
@@ -33,8 +32,7 @@ export const AuthProvider = ({ children }) => {
         setAuthenticated(false);
       }
     };
-
-    fetchUserRole();
+  
   }, []);
 
   return (

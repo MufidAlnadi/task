@@ -92,17 +92,10 @@ const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     user.deleted = deleted;
+    user.activated=false;
     await user.save();
-
-    if (deleted) {
-      return res.status(200).json({ message: "User deleted successfully" });
-    } else {
-      return res
-        .status(200)
-        .json({ message: "User activation status updated successfully" });
-    }
+    return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
   }

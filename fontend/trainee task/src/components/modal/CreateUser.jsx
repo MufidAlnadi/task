@@ -2,9 +2,10 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { TextField, Button, DialogActions } from "@mui/material";
-import Axios from "axios";
 import CustomModal from "./CustomModal";
 import toast from "react-hot-toast";
+import { SINGUP_URL } from "../../api/Url";
+import axios from "../../api/axios";
 
 function CreateUser({ open, onClose }) {
   const validationSchema = Yup.object().shape({
@@ -15,10 +16,11 @@ function CreateUser({ open, onClose }) {
 
   const createUser = async (formData, { resetForm }) => {
     try {
-      const response = await Axios.post("http://localhost:3100/user/signup", formData);
+      const response = await axios.post(SINGUP_URL, formData);
       toast.success("User created successfully", response.data);
       resetForm();
-      onClose();  
+      onClose(); 
+      // fetchData()
     } catch (error) {
       toast.error("User exists already", error);
     }

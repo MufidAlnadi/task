@@ -12,7 +12,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {authenticated ? (
+        {/* {authenticated ? ( */}
           <>
             <Route path="/" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
@@ -20,13 +20,13 @@ function App() {
             <Route path="/users" element={<Users/>} />
             <Route path="*" element={<Navigate to="/users" />} />
           </>
-        ) : (
+        {/* // ) : ( */}
           <>
             <Route path="/" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="*" element={<SignIn />} />
           </>
-        )}
+        {/* )} */}
       </Routes>
     </BrowserRouter>
   );
