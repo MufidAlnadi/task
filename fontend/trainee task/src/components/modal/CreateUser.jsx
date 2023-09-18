@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { TextField, Button, DialogActions } from "@mui/material";
@@ -13,21 +13,22 @@ function CreateUser({ open, onClose }) {
     email: Yup.string().email("Invalid email").required("Email is required"),
     password: Yup.string().required("Password is required"),
   });
-
+  useEffect(() => {
+    createUser();
+  }, [])
   const createUser = async (formData, { resetForm }) => {
     try {
       const response = await axios.post(SINGUP_URL, formData);
       toast.success("User created successfully", response.data);
       resetForm();
       onClose(); 
-      // fetchData()
     } catch (error) {
       toast.error("User exists already", error);
     }
   };
 
   return (
-    <CustomModal open={open} onClose={onClose}>
+    <CustomModal open={open} onClose={onClose} title="Create User">
       <Formik
         initialValues={{
           username: "",

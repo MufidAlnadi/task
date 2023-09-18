@@ -48,7 +48,7 @@ const DataTable = ({ columns, rows, getRowId, searchable = true }) => {
       )}
       <DataGrid
         sx={{
-          px: "1rem",
+          pt: "1.2rem",
           height: searchable ? "calc(100% - 40px)" : "100%",
         }}
         rows={filteredRows}

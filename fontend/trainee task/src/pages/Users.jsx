@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "../api/axios";
 import SideBar from "../components/SideBar";
 import DataTable from "../components/DataTable";
-
 import { IconButton } from "@mui/material";
 import CreditScoreIcon from "@mui/icons-material/CreditScore";
 import toast from "react-hot-toast";
@@ -155,25 +154,22 @@ const Users = () => {
   const filteredRows = rows.filter((user) => !user.deleted);
   return (
     <>
-      <SideBar title="Users" openCreateUser={() => setCreateUserModalOpen(true)} 
+      <SideBar title="Dashboard" openCreateUser={() => setCreateUserModalOpen(true)} 
        openAddSubject ={()=>setIsAddSubjectOpen(true)}
        openAssignStudentSubject ={()=>setAssignStudentSubject(true)}
       />
       <CreateUser
         open={isCreateUserModalOpen}
         onClose={() => setCreateUserModalOpen(false)}
-        // fetchData={fetchData()}
       />
       <AddSubject
         open={isAddSubjectOpen}
         onClose={() => setIsAddSubjectOpen(false)}
-        // fetchData={fetchData()}
       />
       <AssignmentModal
           open={isAssignStudentSubject}
           onClose={() => setAssignStudentSubject(false)}
       />
-
       <DataTable
         columns={columns}
         rows={filteredRows}
@@ -184,6 +180,8 @@ const Users = () => {
         open={isUpdateModalOpen}
         onClose={() => setUpdateModalOpen(false)}
         onUpdate={handleUpdateUser}
+        title="Update User"
+        
       >
         <UserUpdateModal
           selectedUser={selectedUser}

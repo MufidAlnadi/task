@@ -25,8 +25,8 @@ const userSchema = new Schema(
     },
     activated: {
       type: Boolean,
-      default: false,
       required: true,
+      default: false,
     },
     subjects: [
       {

@@ -28,6 +28,7 @@ const UserUpdateModal = ({ selectedUser, onUpdate, onClose }) => {
         <Form>
           <div>
             <Field
+             sx={{ mt: 1 }}
               as={TextField}
               type="text"
               name="username"
@@ -40,6 +41,7 @@ const UserUpdateModal = ({ selectedUser, onUpdate, onClose }) => {
           </div>
           <div>
             <Field
+             sx={{ mt: 2 }}
               as={TextField}
               type="email"
               name="email"

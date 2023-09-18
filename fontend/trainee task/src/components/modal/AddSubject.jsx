@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { TextField, Button, DialogActions } from "@mui/material";
@@ -16,19 +16,21 @@ function AddSubject({ open, onClose }) {
   });
 
   const addSubject = async (formData, { resetForm }) => {    
-    // try {
+    try {
       const response = await axios.post(ADD_SUBJECT_URL, formData); 
       toast.success("Subject added successfully", response.data);
       resetForm();
       onClose();
-      // fetchData();
-    // } catch (error) {
-    //   toast.error("Subject addition failed", error);
-    // }
+      fetchData();
+    } catch (error) {
+      toast.error("Subject addition failed", error);
+    }
   };
-
+  useEffect(() => {
+    addSubject();
+  }, []);
   return (
-    <CustomModal open={open} onClose={onClose}>
+    <CustomModal open={open} onClose={onClose} title="Add Subject">
       <Formik
         initialValues={{
           name: "",

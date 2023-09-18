@@ -4,6 +4,9 @@ const User = require('../models/user');
 const addSubject = async (req, res) => {
   try {
     const { name, minMarks } = req.body;
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ message: 'Name is required' });
+    }
     const newSubject = new Subject({
       name,
       minMarks,
@@ -16,36 +19,44 @@ const addSubject = async (req, res) => {
   }
 };
 const getAllSubjects = async (req, res) => {
-    try {
-      const subjects = await Subject.find();
-  
-      res.status(200).json(subjects);
-    } catch (error) {
-      console.error('Error fetching subjects:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
+  try {
+    const subjects = await Subject.find({}, '_id name'); 
+    const simplifiedSubjects = subjects.map(subject => ({
+      _id: subject._id,
+      name: subject.name
+    }));
 
-  const getUsersWithoutSubject = async (req, res) => {
-    try {
-      const subjectId = req.params.subjectId;
-      const subject = await Subject.findById(subjectId);
-  
-      if (!subject) {
-        return res.status(404).json({ message: 'Subject not found' });
-      }
-  
-      const usersWithSubject = await User.find({ subjects: subjectId });
-      const allStudents = await User.find({ role: 'user', activated: true, deleted: false});
-      
-      const usersWithoutSubject = allStudents.filter(user => !usersWithSubject.some(u => u._id.equals(user._id)));
-  
-      res.status(200).json(usersWithoutSubject);
-    } catch (error) {
-      console.error('Error fetching users without subject:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    res.status(200).json(simplifiedSubjects);
+  } catch (error) {
+    console.error('Error fetching subjects:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+const getUsersWithoutSubject = async (req, res) => {
+  try {
+    const subjectId = req.params.subjectId;
+    const subject = await Subject.findById(subjectId);
+
+    if (!subject) {
+      return res.status(404).json({ message: 'Subject not found' });
     }
-  };
+
+    const usersWithoutSubject = await User.find({
+      role: 'user',
+      activated: true,
+      deleted: false,
+      subjects: { $nin: [subjectId] }
+    }, { _id: 1, username: 1 });
+
+    res.status(200).json(usersWithoutSubject);
+  } catch (error) {
+    console.error('Error fetching users without subject:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 
   const assignSubjectToStudent = async (req, res) => {
     try {
@@ -60,6 +71,30 @@ const getAllSubjects = async (req, res) => {
       res.status(200).json({ message: 'Subject assigned to student successfully' });
     } catch (error) {
       console.error('Error assigning subject to student:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
+  
+  const getSubjectsForStudent = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const user = await User.findById(userId).populate('subjects');
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const subjects = user.subjects.map(subject => ({
+        _id: subject._id,
+        name: subject.name,
+        marks:subject.marks,
+        minMarks: subject.minMarks
+      }));
+  
+      res.status(200).json(subjects);
+    } catch (error) {
+      console.error('Error fetching subjects for the student:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   };
@@ -88,5 +123,6 @@ module.exports = {
     addSubject,
     getAllSubjects,
     assignSubjectToStudent,
-    getUsersWithoutSubject
+    getUsersWithoutSubject,
+    getSubjectsForStudent,
 };
