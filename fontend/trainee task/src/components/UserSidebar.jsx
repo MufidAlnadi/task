@@ -14,15 +14,14 @@ import Typography from "@mui/material/Typography";
 import SubjectIcon from '@mui/icons-material/Subject';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { Grid } from "@mui/material";
-import LogoutIcon from '@mui/icons-material/Logout';
-import Cookies from "js-cookie";
+
 const drawerWidth = 240;
 
-export default function SideBar(props) {
+export default function UserSidebar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navigate = useNavigate();
@@ -51,9 +50,7 @@ export default function SideBar(props) {
       </List>
     </Box>
   );
-  const handlelogout = () => {
-    Cookies.remove('authToken');
-  };
+
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
@@ -150,29 +147,14 @@ export default function SideBar(props) {
             <IconButton
               color="inherit"
               aria-label="Set Student Mark"
-              onClick={props.openAssignStudentMark}
-               sx={{mr: 6}}
             >
+              onClick={props.openAssignStudentMark}
               <Grid container direction="column" alignItems="center">
                 <Grid item>
                   <BorderColorIcon fontSize="large" />
                 </Grid>
                 <Grid item>
                   <Typography variant="body2">Set Mark</Typography>
-                </Grid>
-              </Grid>
-            </IconButton>
-            <IconButton
-              color="inherit"
-              aria-label="Set Student Mark"
-              onClick={handlelogout}
-            >
-              <Grid container direction="column" alignItems="center">
-                <Grid item>
-                  <LogoutIcon fontSize="large" />
-                </Grid>
-                <Grid item>
-                  <Typography variant="body2">Log Out</Typography>
                 </Grid>
               </Grid>
             </IconButton>

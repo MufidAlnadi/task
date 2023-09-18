@@ -7,4 +7,5 @@ export const ADD_SUBJECT_URL = `/subjects/addsubject`
 export const TOKEN_URL = `/token/decode-token`
 export const ALL_SUBJECTS_URL = `/subjects/getallsubjects`
 export const ASSIGN_SUBJECTS_URL = `/subjects/assignstudentsubject`
+export const ASSIGN_SUBJECT_MARK_URL = `/subjects/assignstudentsubject`
 

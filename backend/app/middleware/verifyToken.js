@@ -1,27 +1,24 @@
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
+require("dotenv").config();
 
 function verifyToken(req, res, next) {
-   // Get the token from the request header (you can customize the header field)
-   const token = req.header("Authorization");
+  const token = req.header("Authorization");
 
-   // Check if a token is present
-   if (!token) {
-      return res.status(401).json({ message: "Access denied. No token provided." });
-   }
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
+  }
 
-   try {
-      // Verify the token using the secret key
-      const decoded = jwt.verify(token, process.env.jwtSecret);
+  try {
+    const decoded = jwt.verify(token, process.env.jwtSecret);
+    const { username, email, role, user_id } = decoded;
+    req.user = { username, email, role, user_id };
 
-      // Attach the decoded payload to the request object
-      req.user = decoded;
-
-      // Continue with the next middleware or route handler
-      next();
-   } catch (error) {
-      return res.status(401).json({ message: "Invalid token." });
-   }
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token." });
+  }
 }
 
 module.exports = verifyToken;

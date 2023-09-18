@@ -20,7 +20,6 @@ const AssignmentModal = ({ open, onClose }) => {
   const [subjects, setSubjects] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(""); 
   const [selectedSubject, setSelectedSubject] = useState(""); 
-  console.log("🚀 ~ file: AssignStudentSubject.jsx:23 ~ AssignmentModal ~ selectedSubject:", selectedSubject)
 
   useEffect(() => {
     axios

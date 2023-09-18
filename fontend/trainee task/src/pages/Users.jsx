@@ -14,6 +14,7 @@ import CreateUser from "../components/modal/CreateUser";
 import { ACTIVE_URL, DELETE_URL, GETUSERS_URL, UPDATE_URL } from "../api/Url";
 import AddSubject from "../components/modal/AddSubject";
 import AssignmentModal from "../components/modal/AssignStudentSubject";
+import AssignmentMarksModal from "../components/modal/AssignmentModal";
 
 const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -23,6 +24,7 @@ const Users = () => {
   const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
   const [isAddSubjectOpen, setIsAddSubjectOpen] = useState(false);
   const [isAssignStudentSubject, setAssignStudentSubject] = useState(false);
+  const [isAssignStudentMark, setAssignStudentMark] = useState(false);
 
   const [rows, setRows] = useState([]);
   const fetchData = () => {
@@ -154,9 +156,12 @@ const Users = () => {
   const filteredRows = rows.filter((user) => !user.deleted);
   return (
     <>
-      <SideBar title="Dashboard" openCreateUser={() => setCreateUserModalOpen(true)} 
-       openAddSubject ={()=>setIsAddSubjectOpen(true)}
-       openAssignStudentSubject ={()=>setAssignStudentSubject(true)}
+      <SideBar
+        title="Dashboard"
+        openCreateUser={() => setCreateUserModalOpen(true)}
+        openAddSubject={() => setIsAddSubjectOpen(true)}
+        openAssignStudentSubject={() => setAssignStudentSubject(true)}
+        openAssignStudentMark={() => setAssignStudentMark(true)}
       />
       <CreateUser
         open={isCreateUserModalOpen}
@@ -167,8 +172,12 @@ const Users = () => {
         onClose={() => setIsAddSubjectOpen(false)}
       />
       <AssignmentModal
-          open={isAssignStudentSubject}
-          onClose={() => setAssignStudentSubject(false)}
+        open={isAssignStudentSubject}
+        onClose={() => setAssignStudentSubject(false)}
+      />
+      <AssignmentMarksModal
+        open={isAssignStudentMark}
+        onClose={() => setAssignStudentMark(false)}
       />
       <DataTable
         columns={columns}
@@ -181,7 +190,6 @@ const Users = () => {
         onClose={() => setUpdateModalOpen(false)}
         onUpdate={handleUpdateUser}
         title="Update User"
-        
       >
         <UserUpdateModal
           selectedUser={selectedUser}

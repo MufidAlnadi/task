@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,10 +14,15 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
+import { useAuth } from "../auth/AuthContext";
+import { useNavigate } from "react-router";
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const { userData } = useAuth(); // Assuming you have an authentication context
+
+  const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -30,12 +35,20 @@ export default function SignIn() {
           const { token } = res.data;
           Cookies.set("authToken", token, { expires: 10});
           toast.success("User logged in", res.data);
+          
         })
         .catch((error) => {
           toast.error("This account is inactive, please wait for the admin to activate your account");
         });
     },
   });
+  useEffect(() => {
+    if (userData[2]?.value === 'admin') {
+      navigate('/user')
+    }else{
+      navigate('/home')
+    }
+  }, [userData]);
 
   return (
     <ThemeProvider theme={defaultTheme}>

@@ -6,4 +6,5 @@ router.get("/getsubjectsstudent/:subjectId",subjectController.getUsersWithoutSub
 router.get("/getstudentsubjects/:userId",subjectController.getSubjectsForStudent)
 router.post("/addsubject", subjectController.addSubject);
 router.post("/assignstudentsubject",subjectController.assignSubjectToStudent)
+router.put("/updatemark",subjectController.updateMarks)
 module.exports = router;

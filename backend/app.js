@@ -6,6 +6,7 @@ const { connectionParams, MONGO_URL } = require('./app/config/config');
 const UserRoutes = require('./app/routes/UserRoutes')
 const TokenRoutes = require('./app/routes/TokenRoutes')
 const SubjectRoutes= require('./app/routes/SubjectRoutes')
+const MarksRoutes= require('./app/routes/MarksRoutes')
 const app = express();
 
 app.use(cors());
@@ -27,3 +28,4 @@ app.listen(3100, () => {
  app.use('/user' , UserRoutes );
  app.use('/token',TokenRoutes)
  app.use('/subjects', SubjectRoutes)
+ app.use('/marks', MarksRoutes)

@@ -9,6 +9,8 @@ const subjectSchema = new Schema(
     },
     marks: {
       type: Number,
+      required: true,
+      default: 0,
     },
     minMarks: {
       type: Number,
