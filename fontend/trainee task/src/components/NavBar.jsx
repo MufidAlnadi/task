@@ -5,15 +5,15 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Cookies from 'js-cookie';
 
+
 const NavBar = (props) => {
 
+
   const handleButtonClick = () => {
-   
     Cookies.remove('authToken');
+    window.location.reload(); 
   };
-useEffect(() => {
-    handleButtonClick()
-}, []);
+
   return (
     <div>
       <AppBar position="static">

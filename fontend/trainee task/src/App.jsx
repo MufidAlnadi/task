@@ -5,9 +5,10 @@ import Users from "./pages/Users";
 import Home from "./pages/Home";
 import { useAuth } from "./auth/AuthContext";
 import Cookies from "js-cookie";
+import UserPath from "./auth/UserPath";
+import AdminPath from "./auth/AdminPath";
 
 function App() {
-  const { userData } = useAuth();
   const authToken = Cookies.get("authToken");
 
   return (
@@ -15,17 +16,13 @@ function App() {
       <Routes>
         {authToken ? (
           <>
-            {userData[2]?.value === "user" ? (
-              <>
-              <Route path="/home" element={<Home />} />
-              <Route path="/*" element={<Home />} />
-                </>
-            ) : (
-              <>
-              <Route path="/users" element={<Users />} />
-              <Route path="/*" element={<Users />} />
-              </>
-            )}
+            <Route element={<UserPath />}>
+              <Route path="/" element={<Home />} />
+            </Route>
+
+            <Route element={<AdminPath />}>
+              <Route path="/" element={<Users />} />
+            </Route>
           </>
         ) : (
           <>
@@ -34,7 +31,6 @@ function App() {
             <Route path="*" element={<SignIn />} />
           </>
         )}
-
       </Routes>
     </BrowserRouter>
   );

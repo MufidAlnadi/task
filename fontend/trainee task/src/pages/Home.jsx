@@ -9,8 +9,6 @@ import {
   Paper,
 } from "@mui/material";
 import { useAuth } from "../auth/AuthContext";
-import Cookies from "js-cookie";
-import axios from "../api/axios";
 import SubjectTable from "../components/tables/SubjectTable";
 import NavBar from "../components/NavBar";
 
@@ -42,7 +40,7 @@ const UserTable = () => {
 const Home = () => {
   return (
     <>
-    <NavBar title ="info"/>
+    <NavBar title ="Student Info"/>
       <h2>User Data Table</h2>
       <UserTable />
       <h2>Subject Data Table</h2>

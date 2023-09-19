@@ -37,7 +37,7 @@ const useFetchUserData = () => {
 
   useEffect(() => {
     fetchUserRole();
-  }, []); // Only runs once when the component mounts
+  }, []);
 
   return { authenticated, userData, fetchUserRole }; // Return the userData and a function to manually trigger fetching
 };
