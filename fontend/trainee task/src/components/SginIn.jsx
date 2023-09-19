@@ -11,11 +11,13 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router";
+import { auth } from "../utils/FireBase";
+import axios from "../api/axios";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const defaultTheme = createTheme();
 
@@ -28,21 +30,35 @@ export default function SignIn() {
       email: "",
       password: "",
     },
-    onSubmit: (values) => {
-      axios
-        .post("http://localhost:3100/user/login", values)
-        .then((res) => {
-          const { token } = res.data;
-          Cookies.set("authToken", token, { expires: 10 });
-          toast.success("User logged in", res.data);
-          navigate("/");
-          window.location.reload();
-        })
-        .catch((error) => {
+    onSubmit: async (values) => {
+      console.log("🚀 ~ file: SginIn.jsx:33 ~ onSubmit: ~ values:", values)
+      try {
+        const res = await axios.post("/user/login", values);
+        const { token } = res.data;
+        Cookies.set("authToken", token, { expires: 10 });
+        await signInWithEmailAndPassword(auth, values.email, values.password);
+        toast.success("User logged in", res.data);
+        window.location.reload();
+      } catch (error) {
+        console.log("🚀 ~ file: SginIn.jsx:42 ~ onSubmit: ~ error:", error)
+        if (error.response && error.response.status === 401) {
           toast.error(
             "This account is inactive, please wait for the admin to activate your account"
           );
-        });
+        } else {
+          if (error.code === "auth/user-not-found") {
+            toast.error(
+              "User not found. Please check your email and password."
+            );
+          } else if (error.code === "auth/wrong-password") {
+            toast.error("Wrong password. Please check your password.");
+          } else {
+            toast.error(
+              "An error occurred while logging in. Please try again later."
+            );
+          }
+        }
+      }
     },
   });
 

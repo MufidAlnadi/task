@@ -20,10 +20,10 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { Grid } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import Cookies from "js-cookie";
+import { auth } from "../utils/FireBase";
 const drawerWidth = 240;
 
 export default function SideBar(props) {
-  const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navigate = useNavigate();
 
@@ -51,8 +51,10 @@ export default function SideBar(props) {
       </List>
     </Box>
   );
-  const handlelogout = () => {
+  const handlelogout = async() => {
     Cookies.remove('authToken');
+    await auth.signOut()
+    window.location.reload(); 
   };
   const container =
     window !== undefined ? () => window().document.body : undefined;

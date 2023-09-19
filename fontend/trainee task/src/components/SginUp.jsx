@@ -14,8 +14,10 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Cookies from "js-cookie";
-
+import { auth, db } from "../utils/FireBase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
 
 const defaultTheme = createTheme();
 
@@ -50,18 +52,44 @@ export default function SignUp() {
       confirmPassword: "",
     },
     validationSchema,
-    onSubmit: (values,{resetForm}) => {
-      const dataToSend = { ...values};
-      delete dataToSend.confirmPassword;
-      axios
-        .post("http://localhost:3100/user/signup", dataToSend)
-        .then((response) => {
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const dataToSend = { ...values };
+        delete dataToSend.confirmPassword;
+        const res = await createUserWithEmailAndPassword(
+          auth,
+          dataToSend.email,
+          dataToSend.password
+        );
+        await setDoc(doc(db, "users", res.user.uid), {
+          uid: res.user.uid,
+          username: dataToSend.username
+        });
+        await setDoc(doc(db, "userChats", res.user.uid), {});
+          const response = await axios.post(
+          "http://localhost:3100/user/signup",
+          dataToSend
+        );
+
+        if (response.status === 200) {
           toast.success("User registered successfully:", response.data);
           resetForm();
-        })
-        .catch((error) => {
-          toast.error("email exists already: ", error);
-        });
+        } else {
+          // Handle other response statuses if needed
+          toast.error("Unexpected response status: " + response.status);
+        }
+      } catch (error) {
+        if (error.response) {
+          // The request was made and the server responded with an error status
+          toast.error("Server error: " + error.response.data.message);
+        } else if (error.request) {
+          // The request was made but no response was received
+          toast.error("No response from server.");
+        } else {
+          // Something happened in setting up the request or handling the response
+          toast.error("An error occurred: " + error.message);
+        }
+      }
     },
   });
 

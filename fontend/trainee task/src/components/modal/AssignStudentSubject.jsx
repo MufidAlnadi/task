@@ -31,12 +31,8 @@ const AssignmentModal = ({ open, onClose }) => {
           }
           return uniqueSubjects;
         }, []);
-
         setSubjects(filteredSubjects);
       })
-      .catch((error) => {
-        console.error("Error fetching subjects:", error);
-      });
   }, []);
 
   const fetchstudents = () => {
@@ -49,15 +45,12 @@ const AssignmentModal = ({ open, onClose }) => {
       .then((response) => {
         setStudents(response.data);
       })
-      .catch((error) => {
-        console.error("Error fetching students without subjects:", error);
-      })
   };
 
   useEffect(() => {
     fetchstudents();
   
-  }, []);
+  }, [selectedSubject]);
 
   const handleAssignSubject = () => {
     axios
@@ -71,9 +64,6 @@ const AssignmentModal = ({ open, onClose }) => {
         setSelectedSubject('')
         onClose();
       })
-      .catch((error) => {
-        toast.error("Error assigning subject:", error);
-      });
   };
   const handleChangeSubject = (event) => {
     setSelectedSubject(event.target.value);

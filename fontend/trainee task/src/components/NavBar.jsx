@@ -4,13 +4,15 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Cookies from 'js-cookie';
+import { auth } from '../utils/FireBase';
 
 
 const NavBar = (props) => {
 
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async() => {
     Cookies.remove('authToken');
+    await auth.signOut()
     window.location.reload(); 
   };
 

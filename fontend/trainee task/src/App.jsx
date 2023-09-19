@@ -5,24 +5,30 @@ import Users from "./pages/Users";
 import Home from "./pages/Home";
 import { useAuth } from "./auth/AuthContext";
 import Cookies from "js-cookie";
-import UserPath from "./auth/UserPath";
-import AdminPath from "./auth/AdminPath";
+import { useState } from "react";
+import Chat from "./pages/Chat";
 
 function App() {
-  const authToken = Cookies.get("authToken");
+  const { userData } = useAuth();
+  const [authToken, setAuthToken] = useState(Cookies.get("authToken"));
 
   return (
     <BrowserRouter>
       <Routes>
         {authToken ? (
           <>
-            <Route element={<UserPath />}>
-              <Route path="/" element={<Home />} />
-            </Route>
-
-            <Route element={<AdminPath />}>
-              <Route path="/" element={<Users />} />
-            </Route>
+            {userData[2]?.value === "user" ? (
+              <>
+                <Route path="/home" element={<Home />} />
+                <Route path="/*" element={<Home />} />
+                <Route path="/chat" element={<Chat />} />
+              </>
+            ) : (
+              <>
+                <Route path="/users" element={<Users />} />
+                <Route path="/*" element={<Users />} />
+              </>
+            )}
           </>
         ) : (
           <>
