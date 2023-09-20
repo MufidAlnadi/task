@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   collection,
   query,
@@ -13,21 +13,34 @@ import {
 import { db } from "../../utils/FireBase";
 import { useAuth } from "../../auth/AuthContext";
 
-
 const Search = () => {
   const [username, setUsername] = useState("");
-  console.log("🚀 ~ file: Massages.jsx:19 ~ Search ~ username:", username)
   const [user, setUser] = useState(null);
-  console.log("🚀 ~ file: Massages.jsx:21 ~ Search ~ user:", user)
   const [err, setErr] = useState(false);
   const { userFirebase } = useAuth();
 
+  const getUserData = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    const data = [];
+    querySnapshot.forEach((doc) => {
+      data.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
   const handleSearch = async () => {
     const q = query(
       collection(db, "users"),
       where("displayName", "==", username)
     );
-
+    q.forEach((doc) => {
+      console.log(doc.id,"=>" , doc.data());
+    });
     try {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
@@ -75,7 +88,7 @@ const Search = () => {
     } catch (err) {}
 
     setUser(null);
-    setUsername("")
+    setUsername("");
   };
   return (
     <div className="search">

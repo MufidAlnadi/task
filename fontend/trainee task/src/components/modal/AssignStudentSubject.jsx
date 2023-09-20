@@ -49,6 +49,7 @@ const AssignmentModal = ({ open, onClose }) => {
 
   useEffect(() => {
     fetchstudents();
+    open
   
   }, [selectedSubject]);
 

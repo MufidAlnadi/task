@@ -31,6 +31,7 @@ function AddSubject({ open, onClose }) {
   };
   useEffect(() => {
     addSubject();
+    onClose();
   }, []);
   return (
     <CustomModal open={open} onClose={onClose} title="Add Subject">

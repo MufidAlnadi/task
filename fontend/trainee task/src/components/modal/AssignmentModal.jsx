@@ -68,7 +68,9 @@ const AssignmentMarksModal = ({ open, onClose }) => {
 
       if (response.status === 201) {
         toast.success("Marks posted successfully");
-
+        setSelectedStudent('')
+        setMark(0)
+        setSelectedSubject('')
         onClose();
       } else {
         toast.error("Failed to post marks");

@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Cookies from 'js-cookie';
 import { auth } from '../utils/FireBase';
+import { Link } from 'react-router-dom';
 
 
 const NavBar = (props) => {
@@ -23,6 +24,11 @@ const NavBar = (props) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {props.title}
           </Typography>
+          <Link to="/chat" color="inherit" >
+            <Button color="inherit">
+              Chat
+            </Button>
+          </Link>
           <Button color="inherit" onClick={handleButtonClick}>
             logOut
           </Button>
