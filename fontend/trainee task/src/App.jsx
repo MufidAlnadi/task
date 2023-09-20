@@ -7,6 +7,7 @@ import { useAuth } from "./auth/AuthContext";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import Chat from "./pages/Chat";
+import ChatAdmin from "./pages/ChatAdmin";
 
 function App() {
   const { userData } = useAuth();
@@ -26,6 +27,7 @@ function App() {
             ) : (
               <>
                 <Route path="/users" element={<Users />} />
+                <Route path="/adminchat" element={<ChatAdmin />} />
                 <Route path="/*" element={<Users />} />
               </>
             )}

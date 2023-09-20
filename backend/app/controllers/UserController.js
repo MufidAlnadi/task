@@ -68,6 +68,15 @@ const activateUser = async (req, res) => {
   }
 };
 
+const getAdminUsers = async (req, res) => {
+  try {
+    const adminUsers = await User.find({ role: 'admin' }); 
+    res.status(200).json(adminUsers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const updateUser = async (req, res) => {
   try {
     const { userId, username, email } = req.body;
@@ -151,4 +160,5 @@ module.exports = {
   activateUser,
   authenticateToken,
   getUserRoleById,
+  getAdminUsers
 };

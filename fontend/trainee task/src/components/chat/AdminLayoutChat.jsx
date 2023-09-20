@@ -13,63 +13,43 @@ import {
   orderBy,
   query,
   setDoc,
-  startAfter,
-  limit,
-  getDocs,
 } from "firebase/firestore";
 import { db, storage } from "../../utils/FireBase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-function LayoutChat() {
+function AdminLayoutChat() {
   const { userData } = useAuth();
   const ID = userData[3]?.value;
-  const [isLoading, setIsLoading] = useState(false);
-  const [subjects, setSubjects] = useState([]);
   const [users, setUsers] = useState([]);
   const [input, setInput] = React.useState("");
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
-  console.log(
-    "🚀 ~ file: LayoutChat.jsx:32 ~ LayoutChat ~ chatMessages:",
-    chatMessages
-  );
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [adminUser, setAdminUser] = useState(null);
   const lastMessageRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     axios.get("/subjects/getallsubjects").then((response) => {
       setSubjects(response.data);
     });
   }, []);
 
-  useEffect(() => {
-    axios.get("http://localhost:3100/user/getadmin").then((response) => {
-      setAdminUser(response.data);
+  const fetchstudents = () => {
+    axios.get(`/user/getallusers`).then((response) => {
+      setUsers(response.data);
     });
-  }, []);
-
-  const fetchStudents = () => {
-    axios
-      .get(`/subjects/${selectedSubject}/students/${ID}`)
-      .then((response) => {
-        setUsers(response.data);
-      });
   };
 
   useEffect(() => {
-    fetchStudents();
-  }, [selectedSubject, chatMessages]);
-
+    fetchstudents();
+  }, [selectedSubject]);
+ 
   const scrollToBottom = () => {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-  const handleSubject = (e) => {
-    setSelectedSubject(e);
-  };
-
   const handleSend = async () => {
     if (input.trim() !== "" && selectedUserId) {
       const newMessage = {
@@ -77,18 +57,24 @@ function LayoutChat() {
         sender: ID,
         timestamp: new Date().toISOString(),
       };
+
       const combinedId =
         ID > selectedUserId ? ID + selectedUserId : selectedUserId + ID;
+
       try {
         setIsLoading(true);
+
         const messagesRef = collection(db, "chats", combinedId, "messages");
         await setDoc(doc(messagesRef), newMessage);
+        setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+
         scrollToBottom();
+
         setInput("");
       } catch (err) {
         console.error("Error sending message:", err);
-      } finally {
-        setIsLoading(false);
+      }finally{
+        setIsLoading(false)
       }
     }
   };
@@ -97,12 +83,6 @@ function LayoutChat() {
     setInput(event.target.value);
   };
 
-  const handleBack = () => {
-    setSelectedSubject(null);
-    setUsers([]);
-    setSelectedUserId(null);
-    setChatMessages([]);
-  };
 
   const handleSelect = async (username, _id) => {
     setSelectedUserId(_id);
@@ -127,6 +107,7 @@ function LayoutChat() {
     }
   };
 
+
   const handleImageUpload = (event) => {
     const imageFile = event.target.files[0];
     setSelectedImage(imageFile);
@@ -136,7 +117,6 @@ function LayoutChat() {
     if (selectedImage) {
       const combinedId =
         ID > selectedUserId ? ID + selectedUserId : selectedUserId + ID;
-
       try {
         setIsLoading(true);
 
@@ -157,88 +137,43 @@ function LayoutChat() {
 
         const messagesRef = collection(db, "chats", combinedId, "messages");
         await setDoc(doc(messagesRef), newMessage);
+        setChatMessages((prevMessages) => [...prevMessages, newMessage]);
 
         scrollToBottom();
 
         setSelectedImage(null);
       } catch (err) {
         console.error("Error uploading image:", err);
-      } finally {
+      }finally {
         setIsLoading(false);
       }
     }
   };
 
-  ////////////////////
   return (
     <Grid container>
       <Grid item xs={3} sx={{ p: 2, backgroundColor: "grey.300" }}>
         <Search />
-        <Typography variant="h6">Sidebar</Typography>
-        <Typography variant="h6">{userData[0]?.value}</Typography>
-        {adminUser && adminUser.length > 0 && (
+        <Typography variant="h6">Admin chat</Typography>
+        {users.map((user) => (
           <Button
-            key={adminUser[0]._id}
-            value={adminUser[0]._id}
+            key={user._id}
+            value={user._id}
             variant="outlined"
-            onClick={() =>
-              handleSelect(adminUser[0].username, adminUser[0]._id)
-            }
+            onClick={() => handleSelect(user.username, user._id)}
             fullWidth
           >
-            {adminUser[0].username}
+            {user.username}
           </Button>
-        )}
-        {selectedSubject ? (
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleBack}
-              startIcon={<ArrowBackIcon />}
-              fullWidth
-            >
-              Back
-            </Button>
-            <div>
-              {users.map(({ username, _id }) => (
-                <Button
-                  key={_id}
-                  value={_id}
-                  variant="outlined"
-                  onClick={() => handleSelect(username, _id)}
-                  fullWidth
-                >
-                  {username}
-                </Button>
-              ))}
-            </div>
-          </>
-        ) : (
-          subjects.map(({ name, _id }) => (
-            <Button
-              key={_id}
-              variant="contained"
-              color="primary"
-              value={_id}
-              onClick={(e) => handleSubject(e.target.value)}
-              fullWidth
-            >
-              {name}
-            </Button>
-          ))
-        )}
+        ))}
       </Grid>
-
       <Grid item xs={9}>
         <Box
-          id="chat-messages-box"
           sx={{
             height: "100vh",
             display: "flex",
             flexDirection: "column",
             bgcolor: "grey.200",
-            overflowY: "auto",
           }}
         >
           <Box sx={{ flexGrow: 1, overflow: "auto", p: 2 }}>
@@ -300,6 +235,7 @@ function LayoutChat() {
                   endIcon={<SendIcon />}
                   onClick={handleSend}
                   disabled={isLoading}
+
                 >
                   Send
                 </Button>
@@ -314,8 +250,9 @@ function LayoutChat() {
                     endIcon={<AddIcon />}
                     component="span"
                     disabled={isLoading}
+
                   >
-                    Upload
+                    file
                   </Button>
                 </label>
                 <input
@@ -346,4 +283,4 @@ function LayoutChat() {
   );
 }
 
-export default LayoutChat;
+export default AdminLayoutChat;

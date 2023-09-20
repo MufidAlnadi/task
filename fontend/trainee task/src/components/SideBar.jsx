@@ -20,6 +20,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import { Grid } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import Cookies from "js-cookie";
+import ChatIcon from '@mui/icons-material/Chat';
 import { auth } from "../utils/FireBase";
 const drawerWidth = 240;
 
@@ -100,6 +101,23 @@ export default function SideBar(props) {
               alignItems: "center",
             }}
           >
+            <IconButton
+              color="inherit"
+              aria-label="add user"
+              sx={{mr: 6}}
+              onClick={() => {
+                navigate("/adminchat");
+              }}
+            >
+              <Grid container direction="column" alignItems="center">
+                <Grid item>
+                  <ChatIcon fontSize="large" />
+                </Grid>
+                <Grid item>
+                  <Typography variant="body2">Chat</Typography>
+                </Grid>
+              </Grid>
+            </IconButton>
             <IconButton
               color="inherit"
               aria-label="add user"

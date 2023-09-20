@@ -13,5 +13,6 @@ router.put("/delete", usercontroller.deleteUser);
 router.get("/getallusers", usercontroller.getAllUsers);
 router.get(":userId/role", usercontroller.getUserRoleById);
 router.put("/update", usercontroller.updateUser);
+router.get("/getadmin", usercontroller.getAdminUsers);
 
 module.exports = router;
