@@ -101,7 +101,24 @@ const getSubjectsForStudent = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+const getStudentsInSubject = async (req, res) => {
+  try {
+    const subjectId = req.params.subjectId;
 
+    // Find all users who are students and are enrolled in the specified subject
+    const studentsInSubject = await User.find({
+      role: "user",
+      activated: true,
+      deleted: false,
+      subjects: subjectId, // Check if subjectId is in the subjects array
+    });
+
+    res.status(200).json(studentsInSubject);
+  } catch (error) {
+    console.error("Error fetching students in subject:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const updateMarks = async (req, res) => {
   try {
@@ -141,4 +158,5 @@ module.exports = {
   getUsersWithoutSubject,
   getSubjectsForStudent,
   updateMarks,
+  getStudentsInSubject,
 };

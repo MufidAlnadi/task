@@ -71,6 +71,7 @@ function LayoutChat() {
       try {
         const messagesRef = collection(db, "chats", combinedId, "messages");
         await setDoc(doc(messagesRef), newMessage);
+        setChatMessages((prevMessages) => [...prevMessages, newMessage]);
 
         scrollToBottom();
 
@@ -105,7 +106,7 @@ function LayoutChat() {
         query(
           messagesRef,
           orderBy("timestamp", "desc"),
-          startAfter(lastVisibleTimestamp),
+          startAfter(lastVisibleTimestamp)
         )
       );
 
@@ -132,7 +133,7 @@ function LayoutChat() {
       },
       {
         root: null,
-        rootMargin: '0px',
+        rootMargin: "0px",
         threshold: 0.1,
       }
     );
@@ -150,8 +151,7 @@ function LayoutChat() {
 
   const handleSelect = async (username, _id) => {
     setSelectedUserId(_id);
-    const combinedId =
-      ID > _id ? ID + _id : _id + ID;
+    const combinedId = ID > _id ? ID + _id : _id + ID;
     try {
       const messagesRef = collection(db, "chats", combinedId, "messages");
 
@@ -189,7 +189,10 @@ function LayoutChat() {
         ID > selectedUserId ? ID + selectedUserId : selectedUserId + ID;
 
       try {
-        const storageRef = ref(storage, `chatImages/${combinedId}/${Date.now()}_${selectedImage.name}`);
+        const storageRef = ref(
+          storage,
+          `chatImages/${combinedId}/${Date.now()}_${selectedImage.name}`
+        );
         await uploadBytes(storageRef, selectedImage);
 
         const downloadURL = await getDownloadURL(storageRef);
