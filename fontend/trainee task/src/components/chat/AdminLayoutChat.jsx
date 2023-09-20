@@ -63,13 +63,9 @@ function AdminLayoutChat() {
 
       try {
         setIsLoading(true);
-
         const messagesRef = collection(db, "chats", combinedId, "messages");
         await setDoc(doc(messagesRef), newMessage);
-        setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-
         scrollToBottom();
-
         setInput("");
       } catch (err) {
         console.error("Error sending message:", err);
